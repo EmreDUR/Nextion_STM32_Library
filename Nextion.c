@@ -19,7 +19,6 @@ uint8_t Nextion_Init(Nextion *nex, UART_HandleTypeDef *nextionUARTHandle)
 	return 0;
 }
 
-
 uint8_t Nextion_Update(UART_HandleTypeDef *huart, Nextion *nex)
 {
 	if(huart->Instance == (nex->nextionUARTHandle->Instance))
@@ -52,7 +51,8 @@ uint8_t Nextion_Update(UART_HandleTypeDef *huart, Nextion *nex)
 				transferBuf[i] = nex->_RxDataArr[i];
 			}
 
-			HAL_UART_Transmit_DMA(nex->nextionUARTHandle, transferBuf, count);
+			HAL_UART_Transmit(nex->nextionUARTHandle, transferBuf, count, 50);
+			//HAL_UART_Transmit_DMA(nex->nextionUARTHandle, transferBuf, count);
 			free(transferBuf);
 
 			//Reset the buffer counters
@@ -63,6 +63,12 @@ uint8_t Nextion_Update(UART_HandleTypeDef *huart, Nextion *nex)
 		HAL_UART_Receive_DMA(nex->nextionUARTHandle, (uint8_t *)&nex->_RxData, 1);
 	}
 
+	return 0;
+}
+
+uint8_t Nextion_Restart_IT(Nextion *nex)
+{
+	HAL_UART_Receive_IT(nex->nextionUARTHandle, (uint8_t *)&nex->_RxData, 1);
 	return 0;
 }
 

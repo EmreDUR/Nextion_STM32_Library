@@ -29,7 +29,7 @@ typedef struct
 	UART_HandleTypeDef *nextionUARTHandle;
 
 	//Variables for parsing the received data
-	uint8_t _RxDataArr[12], _RxData, _arrCount, _pkgCount;
+	uint8_t _RxDataArr[128], _RxData, _arrCount, _pkgCount;
 
 } Nextion;
 
@@ -37,26 +37,30 @@ typedef struct
  * Configure UART RX and TX DMA streams and UART Global Interrupt to use this library.
  * This library also requires the function below included in the main code wihtout ANY changes.
  *
- * ----------------------------
  *
+----------------------------
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
 	Nextion_Update(huart, &nextion);
 }
+-----------------------------
  *
- * -----------------------------
  *
  * Library functions
+ *
  *
  */
 
 uint8_t Nextion_Update(UART_HandleTypeDef *huart, Nextion *nex);
 uint8_t Nextion_Init(Nextion *nex, UART_HandleTypeDef *nextionUARTHandle);
+uint8_t Nextion_Restart_IT(Nextion *nex);
 
 void Nextion_Callbacks(Nextion *nex);
 
 /*
- * LOW LEVEL FUNCTIONS
+ *
+ * Low Level Functions
+ *
  */
 void Nextion_Send(Nextion *nex);
 
