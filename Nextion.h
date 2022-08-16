@@ -13,11 +13,14 @@
 
 //Include libraries
 #include "stdlib.h"
+#include "string.h"
+#include "stdio.h"
 
 /*
  * DEFINES
  */
-#define NEXTION_TIMEOUT 50
+#define NEXTION_TIMEOUT 100
+
 
 
 /*
@@ -54,15 +57,15 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 uint8_t Nextion_Update(UART_HandleTypeDef *huart, Nextion *nex);
 uint8_t Nextion_Init(Nextion *nex, UART_HandleTypeDef *nextionUARTHandle);
 uint8_t Nextion_Restart_IT(Nextion *nex);
-
-void Nextion_Callbacks(Nextion *nex);
+uint8_t Nextion_Get_Text(Nextion *nex, char *buf);
 
 /*
  *
  * Low Level Functions
  *
  */
-void Nextion_Send(Nextion *nex);
+uint8_t Nextion_Send_Command(Nextion *nex, char *_command);
+uint8_t Nextion_End_Command(Nextion *nex);
 
 
 #endif /* INC_NEXTION_H_ */

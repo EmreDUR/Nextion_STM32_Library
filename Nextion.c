@@ -72,13 +72,30 @@ uint8_t Nextion_Restart_IT(Nextion *nex)
 	return 0;
 }
 
-void Nextion_Callbacks(Nextion *nex)
+uint8_t Nextion_Get_Text(Nextion *nex, char *buf)
 {
+	char cmd[10]={0};
+	//sprintf (cmd, "get t0.txt");
+	Nextion_Send_Command(nex, cmd);
 
+	return 0;
 }
 
-void Nextion_Send(Nextion *nex)
+char ENDTERMS[]={255,255,255};
+uint8_t Nextion_Send_Command(Nextion *nex, char *_command)
 {
+	uint8_t data[] = "t1.txt=\"Helo!!\"";
 
+	HAL_UART_Transmit(nex->nextionUARTHandle, _command, strlen((const char*)_command), NEXTION_TIMEOUT);
+	Nextion_End_Command(nex);
+
+	return 0;
 }
 
+uint8_t Nextion_End_Command(Nextion *nex)
+{
+	uint8_t EndCommand[3] = {255, 255, 255};
+	HAL_UART_Transmit(nex->nextionUARTHandle, EndCommand, 3, NEXTION_TIMEOUT);
+
+	return 0;
+}
