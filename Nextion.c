@@ -84,9 +84,7 @@ uint8_t Nextion_Get_Text(Nextion *nex, char *buf)
 char ENDTERMS[]={255,255,255};
 uint8_t Nextion_Send_Command(Nextion *nex, char *_command)
 {
-	uint8_t data[] = "t1.txt=\"Helo!!\"";
-
-	HAL_UART_Transmit(nex->nextionUARTHandle, _command, strlen((const char*)_command), NEXTION_TIMEOUT);
+	HAL_UART_Transmit(nex->nextionUARTHandle, (uint8_t *)_command, strlen((const char*)_command), NEXTION_TIMEOUT);
 	Nextion_End_Command(nex);
 
 	return 0;
