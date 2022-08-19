@@ -36,6 +36,13 @@ typedef struct
 
 } Nextion;
 
+typedef struct
+{
+	uint8_t _page, _id;
+	Nextion _nexStruct;
+
+} NexComp;
+
 /*
  * Configure UART RX and TX DMA streams and UART Global Interrupt to use this library.
  * This library also requires the function below included in the main code wihtout ANY changes.
@@ -54,9 +61,11 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
  *
  */
 
+uint8_t NextionAddComp(Nextion* nex, NexComp* _nexcomp, uint8_t __page, uint8_t __id);
 uint8_t Nextion_Update(UART_HandleTypeDef *huart, Nextion *nex);
 uint8_t Nextion_Init(Nextion *nex, UART_HandleTypeDef *nextionUARTHandle);
 uint8_t Nextion_Restart_IT(Nextion *nex);
+uint8_t Nextion_Stop_IT(Nextion *nex);
 uint8_t Nextion_Get_Text(Nextion *nex, char *buf);
 
 /*

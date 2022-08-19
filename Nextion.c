@@ -7,6 +7,15 @@
 
 #include "Nextion.h"
 
+uint8_t NextionAddComp(Nextion* nex, NexComp* _nexcomp, uint8_t __page, uint8_t __id)
+{
+	_nexcomp->_nexStruct = *nex;
+	_nexcomp->_id = __id;
+	_nexcomp->_page = __page;
+
+	return 0;
+}
+
 uint8_t Nextion_Init(Nextion *nex, UART_HandleTypeDef *nextionUARTHandle)
 {
 	nex->nextionUARTHandle = nextionUARTHandle;
@@ -71,6 +80,11 @@ uint8_t Nextion_Restart_IT(Nextion *nex)
 	HAL_UART_Receive_IT(nex->nextionUARTHandle, (uint8_t *)&nex->_RxData, 1);
 	return 0;
 }
+uint8_t Nextion_Stop_IT(Nextion *nex)
+{
+	HAL_UART_AbortReceive_IT(nex->nextionUARTHandle);
+	return 0;
+}
 
 uint8_t Nextion_Get_Text(Nextion *nex, char *buf)
 {
@@ -94,6 +108,7 @@ uint8_t Nextion_End_Command(Nextion *nex)
 {
 	uint8_t EndCommand[3] = {255, 255, 255};
 	HAL_UART_Transmit(nex->nextionUARTHandle, EndCommand, 3, NEXTION_TIMEOUT);
+	Nextion_Restart_IT(nex);
 
 	return 0;
 }
