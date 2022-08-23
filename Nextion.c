@@ -79,12 +79,13 @@ uint8_t Nextion_Update(UART_HandleTypeDef *huart, Nextion *nex)
 				if( nex->_NexCompArr[i]->_id == transferBuf[2])
 				{
 					//HAL_GPIO_TogglePin(TOGGLE_GPIO_Port, TOGGLE_Pin);
-					nex->_NexCompArr[i]->callback();
+					if(nex->_NexCompArr[i]->callback != NULL)
+						nex->_NexCompArr[i]->callback();
 				}
 
 			}
 
-			//HAL_UART_Transmit(nex->nextionUARTHandle, transferBuf, count, 50);
+			HAL_UART_Transmit(nex->nextionUARTHandle, transferBuf, count, 50);
 			//HAL_UART_Transmit_DMA(nex->nextionUARTHandle, transferBuf, count);
 			free(transferBuf);
 
@@ -120,6 +121,8 @@ uint8_t Nextion_Get_Text(Nextion *nex, char *buf)
 	char cmd[10]={0};
 	//sprintf (cmd, "get t0.txt");
 	Nextion_Send_Command(nex, cmd);
+
+	//Gelen verinin işlenip geri döndürülmesi
 
 	//Return OK
 	return 0;
