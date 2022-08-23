@@ -17,24 +17,27 @@
 #include "stdio.h"
 
 /*
- * DEFINES
+ * Defines
  */
 //Reminder -> To use more components or to receive more characters increase buffer or list counts!
 #define NEXTION_TIMEOUT 100
-#define NEXTION_MAX_BUFF_LEN 128
-#define NEXTION_MAX_COMP_COUNT 64
+#define NEXTION_MAX_BUFF_LEN 96
+#define NEXTION_MAX_COMP_COUNT 32
 
 /*
  * NexComp Struct
  */
 typedef struct
 {
+	//Variables for storing page and ID for every component
 	uint8_t _page, _id;
+	void (*callback)();
+
 } NexComp;
 
 
 /*
- * NEXTION STRUCT
+ * Nextion Struct
  */
 typedef struct
 {
@@ -69,7 +72,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
  *
  */
 
-uint8_t NextionAddComp(Nextion* nex, NexComp* _nexcomp, uint8_t __page, uint8_t __id);
+uint8_t NextionAddComp(Nextion* nex, NexComp* _nexcomp, uint8_t __page, uint8_t __id, void (*callbackFunc)());
 uint8_t Nextion_Update(UART_HandleTypeDef *huart, Nextion *nex);
 uint8_t Nextion_Init(Nextion *nex, UART_HandleTypeDef *nextionUARTHandle);
 uint8_t Nextion_Restart_IT(Nextion *nex);

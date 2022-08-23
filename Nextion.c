@@ -7,7 +7,7 @@
 
 #include "Nextion.h"
 
-uint8_t NextionAddComp(Nextion* nex, NexComp* _nexcomp, uint8_t __page, uint8_t __id)
+uint8_t NextionAddComp(Nextion* nex, NexComp* _nexcomp, uint8_t __page, uint8_t __id, void (*callbackFunc)())
 {
 	//Pass the corresponding data from component to component struct
 	_nexcomp->_id = __id;
@@ -16,6 +16,8 @@ uint8_t NextionAddComp(Nextion* nex, NexComp* _nexcomp, uint8_t __page, uint8_t 
 	//Add the component struct to the list on the Nextion Struct
 	nex->_NexCompArr[nex->_NexCompCount] = _nexcomp;
 	nex->_NexCompCount++;
+
+	_nexcomp->callback = callbackFunc;
 
 	//Return OK
 	return 0;
@@ -74,11 +76,15 @@ uint8_t Nextion_Update(UART_HandleTypeDef *huart, Nextion *nex)
 
 			for(uint8_t i = 0; i < nex->_NexCompCount; i++)
 			{
-				if( nex->_NexCompArr[i]->_id == nex->_RxDataArr[2])
-					HAL_GPIO_TogglePin(TOGGLE_GPIO_Port, TOGGLE_Pin);
+				if( nex->_NexCompArr[i]->_id == transferBuf[2])
+				{
+					//HAL_GPIO_TogglePin(TOGGLE_GPIO_Port, TOGGLE_Pin);
+					nex->_NexCompArr[i]->callback();
+				}
+
 			}
 
-			HAL_UART_Transmit(nex->nextionUARTHandle, transferBuf, count, 50);
+			//HAL_UART_Transmit(nex->nextionUARTHandle, transferBuf, count, 50);
 			//HAL_UART_Transmit_DMA(nex->nextionUARTHandle, transferBuf, count);
 			free(transferBuf);
 
