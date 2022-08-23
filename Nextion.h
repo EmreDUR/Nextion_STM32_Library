@@ -19,20 +19,24 @@
 /*
  * DEFINES
  */
+//Reminder -> To use more components or to receive more characters increase buffer or list counts!
 #define NEXTION_TIMEOUT 100
 #define NEXTION_MAX_BUFF_LEN 128
 #define NEXTION_MAX_COMP_COUNT 64
 
 /*
- * STRUCT DECLARATIONS
+ * NexComp Struct
  */
-typedef struct Nextion Nextion;
-typedef struct NexComp NexComp;
+typedef struct
+{
+	uint8_t _page, _id;
+} NexComp;
+
 
 /*
  * NEXTION STRUCT
  */
-struct Nextion
+typedef struct
 {
 	//Handle for the UART used with the Nextion display
 	UART_HandleTypeDef *nextionUARTHandle;
@@ -41,20 +45,11 @@ struct Nextion
 	uint8_t _RxDataArr[NEXTION_MAX_BUFF_LEN], _RxData, _arrCount, _pkgCount;
 
 	//Variables for component list
-	NexComp** _NexCompArr[NEXTION_MAX_COMP_COUNT];
+	NexComp* _NexCompArr[NEXTION_MAX_COMP_COUNT];
 	uint8_t _NexCompCount;
 
-};
+} Nextion;
 
-/*
- * NexComp Struct
- */
-struct NexComp
-{
-	uint8_t _page, _id;
-	Nextion _nexStruct;
-
-};
 
 /*
  * Configure UART RX and TX DMA streams and UART Global Interrupt to use this library.

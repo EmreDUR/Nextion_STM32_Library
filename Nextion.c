@@ -10,12 +10,11 @@
 uint8_t NextionAddComp(Nextion* nex, NexComp* _nexcomp, uint8_t __page, uint8_t __id)
 {
 	//Pass the corresponding data from component to component struct
-	_nexcomp->_nexStruct = *nex;
 	_nexcomp->_id = __id;
 	_nexcomp->_page = __page;
 
 	//Add the component struct to the list on the Nextion Struct
-	nex->_NexCompArr[nex->_NexCompCount] = &_nexcomp;
+	nex->_NexCompArr[nex->_NexCompCount] = _nexcomp;
 	nex->_NexCompCount++;
 
 	//Return OK
@@ -71,6 +70,12 @@ uint8_t Nextion_Update(UART_HandleTypeDef *huart, Nextion *nex)
 			for(uint8_t i = 0; i < count; i++)
 			{
 				transferBuf[i] = nex->_RxDataArr[i];
+			}
+
+			for(uint8_t i = 0; i < nex->_NexCompCount; i++)
+			{
+				if( nex->_NexCompArr[i]->_id == nex->_RxDataArr[2])
+					HAL_GPIO_TogglePin(TOGGLE_GPIO_Port, TOGGLE_Pin);
 			}
 
 			HAL_UART_Transmit(nex->nextionUARTHandle, transferBuf, count, 50);
