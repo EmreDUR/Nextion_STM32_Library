@@ -9,22 +9,35 @@
 
 uint8_t NextionAddComp(Nextion* nex, NexComp* _nexcomp, uint8_t __page, uint8_t __id)
 {
+	//Pass the corresponding data from component to component struct
 	_nexcomp->_nexStruct = *nex;
 	_nexcomp->_id = __id;
 	_nexcomp->_page = __page;
 
+	//Add the component struct to the list on the Nextion Struct
+	nex->_NexCompArr[nex->_NexCompCount] = &_nexcomp;
+	nex->_NexCompCount++;
+
+	//Return OK
 	return 0;
 }
 
 uint8_t Nextion_Init(Nextion *nex, UART_HandleTypeDef *nextionUARTHandle)
 {
+	//Pass the used UART handle to the struct
 	nex->nextionUARTHandle = nextionUARTHandle;
 
+	//Start the parsing counters from zero
 	nex->_arrCount = 0;
 	nex->_pkgCount = 0;
 
+	//Start UART transaction using DMA
 	HAL_UART_Receive_DMA(nex->nextionUARTHandle, (uint8_t *)&nex->_RxData, 1);
 
+	//Start the component count variable from zero
+	nex->_NexCompCount  = 0;
+
+	//Return OK
 	return 0;
 }
 
@@ -72,17 +85,22 @@ uint8_t Nextion_Update(UART_HandleTypeDef *huart, Nextion *nex)
 		HAL_UART_Receive_DMA(nex->nextionUARTHandle, (uint8_t *)&nex->_RxData, 1);
 	}
 
+	//Return OK
 	return 0;
 }
 
 uint8_t Nextion_Restart_IT(Nextion *nex)
 {
 	HAL_UART_Receive_IT(nex->nextionUARTHandle, (uint8_t *)&nex->_RxData, 1);
+
+	//Return OK
 	return 0;
 }
 uint8_t Nextion_Stop_IT(Nextion *nex)
 {
 	HAL_UART_AbortReceive_IT(nex->nextionUARTHandle);
+
+	//Return OK
 	return 0;
 }
 
@@ -92,6 +110,7 @@ uint8_t Nextion_Get_Text(Nextion *nex, char *buf)
 	//sprintf (cmd, "get t0.txt");
 	Nextion_Send_Command(nex, cmd);
 
+	//Return OK
 	return 0;
 }
 
@@ -101,6 +120,7 @@ uint8_t Nextion_Send_Command(Nextion *nex, char *_command)
 	HAL_UART_Transmit(nex->nextionUARTHandle, (uint8_t *)_command, strlen((const char*)_command), NEXTION_TIMEOUT);
 	Nextion_End_Command(nex);
 
+	//Return OK
 	return 0;
 }
 
@@ -110,5 +130,6 @@ uint8_t Nextion_End_Command(Nextion *nex)
 	HAL_UART_Transmit(nex->nextionUARTHandle, EndCommand, 3, NEXTION_TIMEOUT);
 	Nextion_Restart_IT(nex);
 
+	//Return OK
 	return 0;
 }
