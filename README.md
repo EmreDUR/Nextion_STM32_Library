@@ -8,7 +8,6 @@ This library is created for STM32Cube projects using HAL libraries and depends o
 To properly use this library, a USART/UART peripheral of the MCU should be reserved to the Nextion display and configured in "Asynchronous" mode and the Global Interrupts should be activated in the STM32Cube IOC configuration as shown below;
 
 ![](img/USARTConfig.png)
-
 # Usage
 
 This library requires to be initialized in a few steps. Every code in this section is written in order, so you can follow this section as a step by step guide. 
