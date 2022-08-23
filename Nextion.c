@@ -33,7 +33,7 @@ uint8_t Nextion_Init(Nextion *nex, UART_HandleTypeDef *nextionUARTHandle)
 	nex->_pkgCount = 0;
 
 	//Start UART transaction using DMA
-	HAL_UART_Receive_DMA(nex->nextionUARTHandle, (uint8_t *)&nex->_RxData, 1);
+	HAL_UART_Receive_IT(nex->nextionUARTHandle, (uint8_t *)&nex->_RxData, 1);
 
 	//Start the component count variable from zero
 	nex->_NexCompCount  = 0;
@@ -94,7 +94,7 @@ uint8_t Nextion_Update(UART_HandleTypeDef *huart, Nextion *nex)
 			nex->_arrCount = 0;
 		}
 
-		HAL_UART_Receive_DMA(nex->nextionUARTHandle, (uint8_t *)&nex->_RxData, 1);
+		HAL_UART_Receive_IT(nex->nextionUARTHandle, (uint8_t *)&nex->_RxData, 1);
 	}
 
 	//Return OK
