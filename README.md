@@ -32,7 +32,7 @@ Then you could define the USART/UART Interrupt Callback function and including t
 ```
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
-	Nextion_Update(huart, &nextion);
+	NextionUpdate(huart, &nextion);
 }
 ```
 
@@ -50,11 +50,11 @@ void buttonCallback()
 In the next step you can initialise the Nextion and the components you want. 
 ```
 //Initialise Nextion with the configured UART handle
-Nextion_Init(&nextion, &huart2);
+NextionInit(&nextion, &huart2);
 
-//Register the component in the library with parameters: Nextion Object, Component Object, Page, ID, Callback Function
+//Register the component in the library with parameters: Nextion Object, Component Object, Page, ID, Callback Function On Press, Callback Function On Release
 //If you don't want any callback function, pass NULL as the parameter 
-NextionAddComp(&nextion, &button1, 0, 2, buttonCallback);
+NextionAddComp(&nextion, &button1, 0, 2, buttonCallback, NULL);
 ```
 
 -Other functions of the library is still under development and this guide will be updated in the future. 
