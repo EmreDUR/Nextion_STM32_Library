@@ -7,7 +7,7 @@
 
 #include "Nextion.h"
 
-uint8_t NextionAddComp(Nextion* nex, NexComp* _nexcomp, uint8_t __page, uint8_t __id, void (*callbackFunc)())
+uint8_t NextionAddComp(Nextion* nex, NexComp* _nexcomp, uint8_t __page, uint8_t __id, void (*callbackFuncOnPress)(), void (*callbackFuncOnRelease)())
 {
 	//Pass the corresponding data from component to component struct
 	_nexcomp->_id = __id;
@@ -17,7 +17,8 @@ uint8_t NextionAddComp(Nextion* nex, NexComp* _nexcomp, uint8_t __page, uint8_t 
 	nex->_NexCompArr[nex->_NexCompCount] = _nexcomp;
 	nex->_NexCompCount++;
 
-	_nexcomp->callback = callbackFunc;
+	_nexcomp->callbackOnPress = callbackFuncOnPress;
+	_nexcomp->callbackOnRelease = callbackFuncOnRelease;
 
 	//Return OK
 	return 0;
@@ -74,19 +75,25 @@ uint8_t Nextion_Update(UART_HandleTypeDef *huart, Nextion *nex)
 				transferBuf[i] = nex->_RxDataArr[i];
 			}
 
+			//Loop through the component struct array
 			for(uint8_t i = 0; i < nex->_NexCompCount; i++)
 			{
-				if( nex->_NexCompArr[i]->_id == transferBuf[2])
+				//In case of a touch event call the callback function accordingly,
+				if(transferBuf[0] == NEX_RET_EVENT_TOUCH_HEAD)
 				{
-					//HAL_GPIO_TogglePin(TOGGLE_GPIO_Port, TOGGLE_Pin);
-					if(nex->_NexCompArr[i]->callback != NULL)
-						nex->_NexCompArr[i]->callback();
+					//Detect the affected component by its ID
+					if(transferBuf[2] == (nex->_NexCompArr[i]->_id))
+					{
+						//Call the callback function
+						if((transferBuf[3] == NEX_EVENT_ON_PRESS) && (nex->_NexCompArr[i]->callbackOnPress != NULL))
+							nex->_NexCompArr[i]->callbackOnPress();
+						if((transferBuf[3] == NEX_EVENT_ON_RELEASE) && (nex->_NexCompArr[i]->callbackOnRelease != NULL))
+							nex->_NexCompArr[i]->callbackOnRelease();
+					}
 				}
-
 			}
 
 			HAL_UART_Transmit(nex->nextionUARTHandle, transferBuf, count, 50);
-			//HAL_UART_Transmit_DMA(nex->nextionUARTHandle, transferBuf, count);
 			free(transferBuf);
 
 			//Reset the buffer counters

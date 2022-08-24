@@ -24,6 +24,26 @@
 #define NEXTION_MAX_BUFF_LEN 96
 #define NEXTION_MAX_COMP_COUNT 32
 
+#define NEX_RET_CMD_FINISHED                 (0x01)
+#define NEX_RET_EVENT_LAUNCHED               (0x88)
+#define NEX_RET_EVENT_UPGRADED               (0x89)
+#define NEX_RET_EVENT_TOUCH_HEAD             (0x65)
+#define NEX_RET_EVENT_POSITION_HEAD          (0x67)
+#define NEX_RET_EVENT_SLEEP_POSITION_HEAD    (0x68)
+#define NEX_RET_CURRENT_PAGE_ID_HEAD         (0x66)
+#define NEX_RET_STRING_HEAD                  (0x70)
+#define NEX_RET_NUMBER_HEAD                  (0x71)
+#define NEX_RET_INVALID_CMD                  (0x00)
+#define NEX_RET_INVALID_COMPONENT_ID         (0x02)
+#define NEX_RET_INVALID_PAGE_ID              (0x03)
+#define NEX_RET_INVALID_PICTURE_ID           (0x04)
+#define NEX_RET_INVALID_FONT_ID              (0x05)
+#define NEX_RET_INVALID_BAUD                 (0x11)
+#define NEX_RET_INVALID_VARIABLE             (0x1A)
+#define NEX_RET_INVALID_OPERATION            (0x1B)
+#define NEX_EVENT_ON_PRESS					 (0x01)
+#define NEX_EVENT_ON_RELEASE				 (0x00)
+
 /*
  * NexComp Struct
  */
@@ -31,7 +51,8 @@ typedef struct
 {
 	//Variables for storing page and ID for every component
 	uint8_t _page, _id;
-	void (*callback)();
+	void (*callbackOnPress)();
+	void (*callbackOnRelease)();
 
 } NexComp;
 
@@ -72,7 +93,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
  *
  */
 
-uint8_t NextionAddComp(Nextion* nex, NexComp* _nexcomp, uint8_t __page, uint8_t __id, void (*callbackFunc)());
+uint8_t NextionAddComp(Nextion* nex, NexComp* _nexcomp, uint8_t __page, uint8_t __id, void (*callbackFuncOnPress)(), void (*callbackFuncOnRelease)());
 uint8_t Nextion_Update(UART_HandleTypeDef *huart, Nextion *nex);
 uint8_t Nextion_Init(Nextion *nex, UART_HandleTypeDef *nextionUARTHandle);
 uint8_t Nextion_Restart_IT(Nextion *nex);
