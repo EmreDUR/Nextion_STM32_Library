@@ -3,6 +3,20 @@
  *
  *  Created on: Aug 12, 2022
  *      Author: Emre DUR
+ *
+ *
+ * Configure UART RX and TX DMA streams and UART Global Interrupt to use this library.
+ * This library also requires the function below included in the main code wihtout ANY changes.
+ *
+ *
+----------------------------
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
+{
+	Nextion_Update(huart, &nextion);
+}
+-----------------------------
+ *
+ *
  */
 
 #ifndef INC_NEXTION_H_
@@ -19,7 +33,7 @@
 /*
  * Defines
  */
-//Reminder -> To use more components or to receive more characters increase buffer or list counts!
+//Reminder: To use more components or to receive more characters increase buffer or list counts!
 #define NEXTION_TIMEOUT 100
 #define NEXTION_MAX_BUFF_LEN 96
 #define NEXTION_MAX_COMP_COUNT 32
@@ -51,6 +65,8 @@ typedef struct
 {
 	//Variables for storing page and ID for every component
 	uint8_t _page, _id;
+
+	//Function pointers for storing the callback functions
 	void (*callbackOnPress)();
 	void (*callbackOnRelease)();
 
@@ -76,37 +92,25 @@ typedef struct
 
 
 /*
- * Configure UART RX and TX DMA streams and UART Global Interrupt to use this library.
- * This library also requires the function below included in the main code wihtout ANY changes.
  *
- *
-----------------------------
-void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
-{
-	Nextion_Update(huart, &nextion);
-}
------------------------------
- *
- *
- * Library functions
- *
+ * Library User functions
  *
  */
 
 uint8_t NextionAddComp(Nextion* nex, NexComp* _nexcomp, uint8_t __page, uint8_t __id, void (*callbackFuncOnPress)(), void (*callbackFuncOnRelease)());
-uint8_t Nextion_Update(UART_HandleTypeDef *huart, Nextion *nex);
-uint8_t Nextion_Init(Nextion *nex, UART_HandleTypeDef *nextionUARTHandle);
-uint8_t Nextion_Restart_IT(Nextion *nex);
-uint8_t Nextion_Stop_IT(Nextion *nex);
-uint8_t Nextion_Get_Text(Nextion *nex, char *buf);
+uint8_t NextionUpdate(UART_HandleTypeDef *huart, Nextion *nex);
+uint8_t NextionInit(Nextion *nex, UART_HandleTypeDef *nextionUARTHandle);
+uint8_t NextionGetText(Nextion *nex, char *buf);
 
 /*
  *
- * Low Level Functions
+ * Library Low Level Functions
  *
  */
-uint8_t Nextion_Send_Command(Nextion *nex, char *_command);
-uint8_t Nextion_End_Command(Nextion *nex);
+uint8_t NextionRestartIT(Nextion *nex);
+uint8_t NextionStopIT(Nextion *nex);
+uint8_t NextionSendCommand(Nextion *nex, char *_command);
+uint8_t NextionEndCommand(Nextion *nex);
 
 
 #endif /* INC_NEXTION_H_ */

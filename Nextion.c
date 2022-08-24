@@ -24,7 +24,7 @@ uint8_t NextionAddComp(Nextion* nex, NexComp* _nexcomp, uint8_t __page, uint8_t 
 	return 0;
 }
 
-uint8_t Nextion_Init(Nextion *nex, UART_HandleTypeDef *nextionUARTHandle)
+uint8_t NextionInit(Nextion *nex, UART_HandleTypeDef *nextionUARTHandle)
 {
 	//Pass the used UART handle to the struct
 	nex->nextionUARTHandle = nextionUARTHandle;
@@ -43,7 +43,7 @@ uint8_t Nextion_Init(Nextion *nex, UART_HandleTypeDef *nextionUARTHandle)
 	return 0;
 }
 
-uint8_t Nextion_Update(UART_HandleTypeDef *huart, Nextion *nex)
+uint8_t NextionUpdate(UART_HandleTypeDef *huart, Nextion *nex)
 {
 	if(huart->Instance == (nex->nextionUARTHandle->Instance))
 	{
@@ -57,7 +57,7 @@ uint8_t Nextion_Update(UART_HandleTypeDef *huart, Nextion *nex)
 		else
 			nex->_pkgCount = 0;
 
-		//If the data is recieved correctly;
+		//If the data is recieved correctly,
 		if(nex->_pkgCount == 3)
 		{
 			//Send the data to the sender back:
@@ -68,6 +68,7 @@ uint8_t Nextion_Update(UART_HandleTypeDef *huart, Nextion *nex)
 				if(nex->_RxDataArr[i] == 0xFF) FFCount++;
 			}
 
+			//Create and place the data in a dynamically allocated buffer for easy proccessing,
 			uint8_t *transferBuf = (uint8_t*) malloc(count * sizeof(uint8_t));
 
 			for(uint8_t i = 0; i < count; i++)
@@ -75,16 +76,16 @@ uint8_t Nextion_Update(UART_HandleTypeDef *huart, Nextion *nex)
 				transferBuf[i] = nex->_RxDataArr[i];
 			}
 
-			//Loop through the component struct array
-			for(uint8_t i = 0; i < nex->_NexCompCount; i++)
+			//In case of a touch event call the callback function accordingly,
+			if(transferBuf[0] == NEX_RET_EVENT_TOUCH_HEAD)
 			{
-				//In case of a touch event call the callback function accordingly,
-				if(transferBuf[0] == NEX_RET_EVENT_TOUCH_HEAD)
+				//Loop through the component struct array,
+				for(uint8_t i = 0; i < nex->_NexCompCount; i++)
 				{
 					//Detect the affected component by its ID
 					if(transferBuf[2] == (nex->_NexCompArr[i]->_id))
 					{
-						//Call the callback function
+						//Call the desired On Press or On Release callback function,
 						if((transferBuf[3] == NEX_EVENT_ON_PRESS) && (nex->_NexCompArr[i]->callbackOnPress != NULL))
 							nex->_NexCompArr[i]->callbackOnPress();
 						if((transferBuf[3] == NEX_EVENT_ON_RELEASE) && (nex->_NexCompArr[i]->callbackOnRelease != NULL))
@@ -93,10 +94,13 @@ uint8_t Nextion_Update(UART_HandleTypeDef *huart, Nextion *nex)
 				}
 			}
 
+			//Send the received command back for debugging purposes,
 			HAL_UART_Transmit(nex->nextionUARTHandle, transferBuf, count, 50);
+
+			//Clear the dynamically allocated buffer after working with it,
 			free(transferBuf);
 
-			//Reset the buffer counters
+			//Reset the buffer counters,
 			nex->_pkgCount = 0;
 			nex->_arrCount = 0;
 		}
@@ -108,26 +112,28 @@ uint8_t Nextion_Update(UART_HandleTypeDef *huart, Nextion *nex)
 	return 0;
 }
 
-uint8_t Nextion_Restart_IT(Nextion *nex)
+uint8_t NextionRestartIT(Nextion *nex)
 {
 	HAL_UART_Receive_IT(nex->nextionUARTHandle, (uint8_t *)&nex->_RxData, 1);
 
 	//Return OK
 	return 0;
 }
-uint8_t Nextion_Stop_IT(Nextion *nex)
+
+uint8_t NextionStopIT(Nextion *nex)
 {
+	//Stop UART interrupts. Required for Nextion communication functions,
 	HAL_UART_AbortReceive_IT(nex->nextionUARTHandle);
 
 	//Return OK
 	return 0;
 }
 
-uint8_t Nextion_Get_Text(Nextion *nex, char *buf)
+uint8_t NextionGetText(Nextion *nex, char *buf)
 {
 	char cmd[10]={0};
 	//sprintf (cmd, "get t0.txt");
-	Nextion_Send_Command(nex, cmd);
+	NextionSendCommand(nex, cmd);
 
 	//Gelen verinin işlenip geri döndürülmesi
 
@@ -136,20 +142,20 @@ uint8_t Nextion_Get_Text(Nextion *nex, char *buf)
 }
 
 char ENDTERMS[]={255,255,255};
-uint8_t Nextion_Send_Command(Nextion *nex, char *_command)
+uint8_t NextionSendCommand(Nextion *nex, char *_command)
 {
 	HAL_UART_Transmit(nex->nextionUARTHandle, (uint8_t *)_command, strlen((const char*)_command), NEXTION_TIMEOUT);
-	Nextion_End_Command(nex);
+	NextionEndCommand(nex);
 
 	//Return OK
 	return 0;
 }
 
-uint8_t Nextion_End_Command(Nextion *nex)
+uint8_t NextionEndCommand(Nextion *nex)
 {
 	uint8_t EndCommand[3] = {255, 255, 255};
 	HAL_UART_Transmit(nex->nextionUARTHandle, EndCommand, 3, NEXTION_TIMEOUT);
-	Nextion_Restart_IT(nex);
+	NextionRestartIT(nex);
 
 	//Return OK
 	return 0;
