@@ -94,8 +94,19 @@ uint8_t NextionUpdate(UART_HandleTypeDef *huart, Nextion *nex)
 				}
 			}
 
+			if(transferBuf[0] == NEX_RET_STRING_HEAD)
+			{
+				nex->NextTextLen = 0;
+				for(int i = 0; i < (count - 4); i++)
+				{
+					nex->NexTextBuff[i] = transferBuf[i+1];
+					nex->NextTextLen++;
+				}
+			}
+
 			//Send the received command back for debugging purposes,
-			HAL_UART_Transmit(nex->nextionUARTHandle, transferBuf, count, 50);
+			//HAL_UART_Transmit(nex->nextionUARTHandle, transferBuf, count, 50);
+			//HAL_UART_Transmit(nex->nextionUARTHandle, nex->NexTextBuff, nex->NextTextLen, 50);
 
 			//Clear the dynamically allocated buffer after working with it,
 			free(transferBuf);
@@ -131,11 +142,22 @@ uint8_t NextionStopIT(Nextion *nex)
 
 uint8_t NextionGetText(Nextion *nex, char *buf)
 {
-	char cmd[10]={0};
-	//sprintf (cmd, "get t0.txt");
-	NextionSendCommand(nex, cmd);
+	/*
+	//Char buffer for storing the received string
+	char getTextBuff[NEXTION_TEXT_BUFF_LEN], getTextVar;
+	uint8_t getTextFFCount = 0, getTextLen = 0;
 
-	//Gelen verinin işlenip geri döndürülmesi
+	uint8_t Rx_data;
+
+	*/
+	//char cmd[10]={0};
+	//sprintf (cmd, "get t0.txt");
+	NextionSendCommand(nex, "get t0.txt");
+
+	for(uint8_t i = 0; i < nex->NextTextLen; i++)
+	{
+		buf[i] = nex->NexTextBuff[i];
+	}
 
 	//Return OK
 	return 0;

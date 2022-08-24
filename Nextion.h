@@ -34,8 +34,9 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
  * Defines
  */
 //Reminder: To use more components or to receive more characters increase buffer or list counts!
-#define NEXTION_TIMEOUT 100
+#define NEXTION_TIMEOUT 250
 #define NEXTION_MAX_BUFF_LEN 96
+#define NEXTION_TEXT_BUFF_LEN 64
 #define NEXTION_MAX_COMP_COUNT 32
 
 #define NEX_RET_CMD_FINISHED                 (0x01)
@@ -87,6 +88,10 @@ typedef struct
 	//Variables for component list
 	NexComp* _NexCompArr[NEXTION_MAX_COMP_COUNT];
 	uint8_t _NexCompCount;
+
+	//Variables for receiving strings and numbers,
+	uint8_t NexTextBuff[NEXTION_TEXT_BUFF_LEN], NextTextLen;
+	int32_t NextNumBuff;
 
 } Nextion;
 
