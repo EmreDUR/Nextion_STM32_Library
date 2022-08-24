@@ -58,3 +58,10 @@ NextionAddComp(&nextion, &button1, 0, 2, buttonCallback);
 ```
 
 -Other functions of the library is still under development and this guide will be updated in the future. 
+
+# Thanks
+I want to thank the creators of the repositories below for the inspiration. 
+
+- https://github.com/ITEAD-Thierry/NextionX
+- https://github.com/itead/ITEADLIB_Arduino_Nextion
+- https://github.com/guiguitz/STM32-Nextion-API
