@@ -60,6 +60,9 @@ The code below shows a complete example if you want a component callback;
 ```
 #include "Nextion.h"
 
+Nextion nextion; 
+NexComp button1;
+
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
 	NextionUpdate(huart, &nextion);
@@ -70,9 +73,6 @@ void buttonCallback()
 	//Example function
 	HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
 }
-
-Nextion nextion; 
-NexComp button1;
 
 int main()
 {
