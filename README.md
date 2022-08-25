@@ -67,7 +67,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 
 void buttonCallback()
 {
-  //Example function
+	//Example function
 	HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
 }
 
