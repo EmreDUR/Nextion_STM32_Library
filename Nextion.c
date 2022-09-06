@@ -7,7 +7,7 @@
 
 #include "Nextion.h"
 
-uint8_t NextionAddComp(Nextion* nex, NexComp* _nexcomp, uint8_t __page, uint8_t __id, void (*callbackFuncOnPress)(), void (*callbackFuncOnRelease)())
+uint8_t NextionAddComp(Nextion* nex, NexComp* _nexcomp, char* objectname, uint8_t __page, uint8_t __id, void (*callbackFuncOnPress)(), void (*callbackFuncOnRelease)())
 {
 	//Pass the corresponding data from component to component struct
 	_nexcomp->_id = __id;
@@ -123,41 +123,18 @@ uint8_t NextionUpdate(UART_HandleTypeDef *huart, Nextion *nex)
 	return 0;
 }
 
-uint8_t NextionRestartIT(Nextion *nex)
-{
-	HAL_UART_Receive_IT(nex->nextionUARTHandle, (uint8_t *)&nex->_RxData, 1);
-
-	//Return OK
-	return 0;
-}
-
-uint8_t NextionStopIT(Nextion *nex)
-{
-	//Stop UART interrupts. Required for Nextion communication functions,
-	HAL_UART_AbortReceive_IT(nex->nextionUARTHandle);
-
-	//Return OK
-	return 0;
-}
-
 uint8_t NextionGetText(Nextion *nex, char *buf)
 {
-	/*
-	//Char buffer for storing the received string
-	char getTextBuff[NEXTION_TEXT_BUFF_LEN], getTextVar;
-	uint8_t getTextFFCount = 0, getTextLen = 0;
-
-	uint8_t Rx_data;
-
-	*/
 	//char cmd[10]={0};
 	//sprintf (cmd, "get t0.txt");
 	NextionSendCommand(nex, "get t0.txt");
 
+	//Copy the received string to the desired buffer (and add NULL character to the end),
 	for(uint8_t i = 0; i < nex->NextTextLen; i++)
 	{
 		buf[i] = nex->NexTextBuff[i];
 	}
+	buf[nex->NextTextLen] = '\0';
 
 	//Return OK
 	return 0;
@@ -178,6 +155,24 @@ uint8_t NextionEndCommand(Nextion *nex)
 	uint8_t EndCommand[3] = {255, 255, 255};
 	HAL_UART_Transmit(nex->nextionUARTHandle, EndCommand, 3, NEXTION_TIMEOUT);
 	NextionRestartIT(nex);
+
+	//Return OK
+	return 0;
+}
+
+//Following two functions are not needed anymore and will be removed in the future,
+uint8_t NextionRestartIT(Nextion *nex)
+{
+	HAL_UART_Receive_IT(nex->nextionUARTHandle, (uint8_t *)&nex->_RxData, 1);
+
+	//Return OK
+	return 0;
+}
+
+uint8_t NextionStopIT(Nextion *nex)
+{
+	//Stop UART interrupts. Required for Nextion communication functions,
+	HAL_UART_AbortReceive_IT(nex->nextionUARTHandle);
 
 	//Return OK
 	return 0;
