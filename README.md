@@ -56,8 +56,39 @@ NextionInit(&nextion, &huart2);
 //If you don't want any callback function, pass NULL as the parameter 
 NextionAddComp(&nextion, &button1, 0, 2, buttonCallback, NULL);
 ```
+The code below shows a complete example if you want a component callback (Only functions needed for this library is included);
+```
+#include "Nextion.h"
+
+Nextion nextion; 
+NexComp button1;
+
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
+{
+	NextionUpdate(huart, &nextion);
+}
+
+void buttonCallback()
+{
+	//Example function
+	HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
+}
+
+int main()
+{
+	NextionInit(&nextion, &huart2);
+	NextionAddComp(&nextion, &button1, 0, 2, buttonCallback, NULL);
+	
+	while(1)
+	{
+		//Main loop
+	}
+}
+```
+
 
 -Other functions of the library is still under development and this guide will be updated in the future. 
+
 
 # Thanks
 I want to thank the creators of the repositories below for the inspiration. 
