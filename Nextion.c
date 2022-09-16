@@ -123,7 +123,7 @@ uint8_t NextionUpdate(UART_HandleTypeDef *huart, Nextion *nex)
 	return 0;
 }
 
-uint8_t NextionGetText(Nextion *nex, char *buf)
+uint8_t NextionGetText(Nextion *nex, NexComp *comp, char *buf)
 {
 	//char cmd[10]={0};
 	//sprintf (cmd, "get t0.txt");

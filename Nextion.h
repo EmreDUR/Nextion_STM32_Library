@@ -108,7 +108,7 @@ typedef struct
 uint8_t NextionAddComp(Nextion* nex, NexComp* _nexcomp, char* objectname, uint8_t __page, uint8_t __id, void (*callbackFuncOnPress)(), void (*callbackFuncOnRelease)());
 uint8_t NextionUpdate(UART_HandleTypeDef *huart, Nextion *nex);
 uint8_t NextionInit(Nextion *nex, UART_HandleTypeDef *nextionUARTHandle);
-uint8_t NextionGetText(Nextion *nex, char *buf);
+uint8_t NextionGetText(Nextion *nex, NexComp *comp, char *buf);
 
 /*
  *
