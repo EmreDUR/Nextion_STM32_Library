@@ -72,7 +72,8 @@ typedef struct
 	void (*callbackOnRelease)();
 
 	//Variable for storing object name
-	char objname[10];
+	char *objname;
+
 
 } NexComp;
 

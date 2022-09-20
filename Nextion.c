@@ -9,6 +9,11 @@
 
 uint8_t NextionAddComp(Nextion* nex, NexComp* _nexcomp, char* objectname, uint8_t __page, uint8_t __id, void (*callbackFuncOnPress)(), void (*callbackFuncOnRelease)())
 {
+	//Make space before passing the object name to the nexcomp struct
+	_nexcomp->objname = (char *) malloc((strlen(objectname)*sizeof(char)) + 1);
+	//Pass the object name to the struct
+	strcpy(_nexcomp->objname, objectname);
+
 	//Pass the corresponding data from component to component struct
 	_nexcomp->_id = __id;
 	_nexcomp->_page = __page;
@@ -17,6 +22,7 @@ uint8_t NextionAddComp(Nextion* nex, NexComp* _nexcomp, char* objectname, uint8_
 	nex->_NexCompArr[nex->_NexCompCount] = _nexcomp;
 	nex->_NexCompCount++;
 
+	//Bind the correct callback functions together
 	_nexcomp->callbackOnPress = callbackFuncOnPress;
 	_nexcomp->callbackOnRelease = callbackFuncOnRelease;
 
