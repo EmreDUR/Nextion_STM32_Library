@@ -111,6 +111,8 @@ uint8_t NextionUpdate(UART_HandleTypeDef *huart, Nextion *nex);
 uint8_t NextionInit(Nextion *nex, UART_HandleTypeDef *nextionUARTHandle);
 uint8_t NextionGetText(Nextion *nex, NexComp *comp, char *buf);
 uint8_t NextionSetText(Nextion *nex, NexComp *comp, char *usertext);
+uint8_t NextionGetVal(Nextion *nex, NexComp *comp, int *valBuf);
+uint8_t NextionSetVal(Nextion *nex, NexComp *comp, int userval);
 
 /*
  *

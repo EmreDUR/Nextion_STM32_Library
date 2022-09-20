@@ -166,6 +166,36 @@ uint8_t NextionSetText(Nextion *nex, NexComp *comp, char *usertext)
 	return 0;
 }
 
+uint8_t NextionGetVal(Nextion *nex, NexComp *comp, int *valBuf)
+{
+	//Allocate a static buffer for combining the transfer command string
+	char transmitBuff[NEXTION_TEXT_BUFF_LEN] = {0};
+
+	//Combine required commands in a single string
+	sprintf(transmitBuff, "%s.txt=\"%s\"", comp->objname, usertext);
+
+	//Send the combined command to Nextion and wait for the received answer
+	NextionSendCommand(nex, transmitBuff);
+
+	//Return OK
+	return 0;
+}
+
+uint8_t NextionSetVal(Nextion *nex, NexComp *comp, int userval)
+{
+	//Allocate a static buffer for combining the transfer command string
+	char transmitBuff[NEXTION_TEXT_BUFF_LEN] = {0};
+
+	//Combine required commands in a single string
+	sprintf(transmitBuff, "%s.txt=\"%s\"", comp->objname, usertext);
+
+	//Send the combined command to Nextion and wait for the received answer
+	NextionSendCommand(nex, transmitBuff);
+
+	//Return OK
+	return 0;
+}
+
 char ENDTERMS[]={255,255,255};
 uint8_t NextionSendCommand(Nextion *nex, char *_command)
 {
