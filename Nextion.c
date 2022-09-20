@@ -131,9 +131,14 @@ uint8_t NextionUpdate(UART_HandleTypeDef *huart, Nextion *nex)
 
 uint8_t NextionGetText(Nextion *nex, NexComp *comp, char *buf)
 {
-	//char cmd[10]={0};
-	//sprintf (cmd, "get t0.txt");
-	NextionSendCommand(nex, "get t0.txt");
+	//Allocate a static buffer for combining the transfer command string
+	char transmitBuff[NEXTION_TEXT_BUFF_LEN] = {0};
+
+	//Combine required commands in a single string
+	sprintf(transmitBuff, "get %s.txt", comp->objname);
+
+	//Send the combined command to Nextion and wait for the received answer
+	NextionSendCommand(nex, transmitBuff);
 
 	//Copy the received string to the desired buffer (and add NULL character to the end),
 	for(uint8_t i = 0; i < nex->NextTextLen; i++)
