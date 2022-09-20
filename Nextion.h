@@ -110,6 +110,7 @@ uint8_t NextionAddComp(Nextion* nex, NexComp* _nexcomp, char* objectname, uint8_
 uint8_t NextionUpdate(UART_HandleTypeDef *huart, Nextion *nex);
 uint8_t NextionInit(Nextion *nex, UART_HandleTypeDef *nextionUARTHandle);
 uint8_t NextionGetText(Nextion *nex, NexComp *comp, char *buf);
+uint8_t NextionSetText(Nextion *nex, NexComp *comp, char *usertext);
 
 /*
  *
