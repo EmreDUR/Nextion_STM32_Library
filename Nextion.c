@@ -88,8 +88,8 @@ uint8_t NextionUpdate(UART_HandleTypeDef *huart, Nextion *nex)
 				//Loop through the component struct array,
 				for(uint8_t i = 0; i < nex->_NexCompCount; i++)
 				{
-					//Detect the affected component by its ID
-					if(transferBuf[2] == (nex->_NexCompArr[i]->_id))
+					//Detect the affected component by its Page and ID
+					if( (transferBuf[2] == (nex->_NexCompArr[i]->_id)) && (transferBuf[1] == (nex->_NexCompArr[i]->_page)) )
 					{
 						//Call the desired On Press or On Release callback function,
 						if((transferBuf[3] == NEX_EVENT_ON_PRESS) && (nex->_NexCompArr[i]->callbackOnPress != NULL))
