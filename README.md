@@ -87,7 +87,46 @@ int main()
 ```
 
 
--Other functions of the library is still under development and this guide will be updated in the future. 
+## Component Functions
+
+This library has four functions which can be used with the corresponding Nextion components:
+
+ ### NextionGetText(Nextion *nex, NexComp *comp, char *buf);
+
+This function gets the text data of a Nextion Text component. 
+
+Example Usage;
+```
+NextionGetText(&nextion, &nexText1, mybuffer);
+```
+
+ ### NextionSetText(Nextion *nex, NexComp *comp, char *usertext);
+
+This function gets the text data of a Nextion Text component. 
+
+Example Usage;
+```
+NextionSetText(&nextion, &nexText1, "Hello!");
+```
+
+ ### NextionGetVal(Nextion *nex, NexComp *comp, int *valBuf);
+
+This function gets the text data of a Nextion Text component. 
+
+Example Usage;
+```
+NextionGetVal(&nextion, &number0, &exampleVariable);
+```
+
+ ### NextionSetVal(Nextion *nex, NexComp *comp, int userval);
+
+This function gets the text data of a Nextion Text component. 
+
+Example Usage;
+```
+NextionSetVal(&nextion, &number1, 93);
+```
+
 
 
 # Thanks
