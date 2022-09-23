@@ -100,6 +100,7 @@ uint8_t NextionUpdate(UART_HandleTypeDef *huart, Nextion *nex)
 				}
 			}
 
+			//If the recieved package contains string data
 			if(transferBuf[0] == NEX_RET_STRING_HEAD)
 			{
 				nex->NextTextLen = 0;
@@ -108,6 +109,12 @@ uint8_t NextionUpdate(UART_HandleTypeDef *huart, Nextion *nex)
 					nex->NexTextBuff[i] = transferBuf[i+1];
 					nex->NextTextLen++;
 				}
+			}
+
+			//If the recieved package contains integer data
+			if(transferBuf[0] == NEX_RET_NUMBER_HEAD)
+			{
+				nex->NextNumBuff = ((uint32_t)transferBuf[4]<<24)|((uint32_t)transferBuf[3]<<16)|(transferBuf[2]<<8)|(transferBuf[1]);
 			}
 
 			//Send the received command back for debugging purposes,
@@ -172,10 +179,13 @@ uint8_t NextionGetVal(Nextion *nex, NexComp *comp, int *valBuf)
 	char transmitBuff[NEXTION_TEXT_BUFF_LEN] = {0};
 
 	//Combine required commands in a single string
-	sprintf(transmitBuff, "%s.txt=\"%s\"", comp->objname, usertext);
+	sprintf(transmitBuff, "get %s.val", comp->objname);
 
 	//Send the combined command to Nextion and wait for the received answer
 	NextionSendCommand(nex, transmitBuff);
+
+	//Get the received value from the buffer and pass it to the user variable
+	*valBuf = nex->NextNumBuff;
 
 	//Return OK
 	return 0;
@@ -187,7 +197,7 @@ uint8_t NextionSetVal(Nextion *nex, NexComp *comp, int userval)
 	char transmitBuff[NEXTION_TEXT_BUFF_LEN] = {0};
 
 	//Combine required commands in a single string
-	sprintf(transmitBuff, "%s.txt=\"%s\"", comp->objname, usertext);
+	sprintf(transmitBuff, "%s.val=%d", comp->objname, userval);
 
 	//Send the combined command to Nextion and wait for the received answer
 	NextionSendCommand(nex, transmitBuff);

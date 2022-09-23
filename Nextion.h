@@ -74,7 +74,6 @@ typedef struct
 	//Variable for storing object name
 	char *objname;
 
-
 } NexComp;
 
 
@@ -101,9 +100,7 @@ typedef struct
 
 
 /*
- *
  * Library User functions
- *
  */
 
 uint8_t NextionAddComp(Nextion* nex, NexComp* _nexcomp, char* objectname, uint8_t __page, uint8_t __id, void (*callbackFuncOnPress)(), void (*callbackFuncOnRelease)());
@@ -114,10 +111,9 @@ uint8_t NextionSetText(Nextion *nex, NexComp *comp, char *usertext);
 uint8_t NextionGetVal(Nextion *nex, NexComp *comp, int *valBuf);
 uint8_t NextionSetVal(Nextion *nex, NexComp *comp, int userval);
 
+
 /*
- *
  * Library Low Level Functions
- *
  */
 uint8_t NextionSendCommand(Nextion *nex, char *_command);
 uint8_t NextionEndCommand(Nextion *nex);
