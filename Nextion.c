@@ -146,6 +146,7 @@ uint8_t NextionGetText(Nextion *nex, NexComp *comp, char *buf)
 
 	//Send the combined command to Nextion and wait for the received answer
 	NextionSendCommand(nex, transmitBuff);
+	HAL_Delay(10);
 
 	//Copy the received string to the desired buffer (and add NULL character to the end),
 	for(uint8_t i = 0; i < nex->NextTextLen; i++)
@@ -183,6 +184,10 @@ uint8_t NextionGetVal(Nextion *nex, NexComp *comp, int *valBuf)
 
 	//Send the combined command to Nextion and wait for the received answer
 	NextionSendCommand(nex, transmitBuff);
+
+	//Wait for Nextion to send the command back;
+	//This line blocks the code for a while and provides a crude ensurement
+	HAL_Delay(50);
 
 	//Get the received value from the buffer and pass it to the user variable
 	*valBuf = nex->NextNumBuff;
