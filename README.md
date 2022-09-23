@@ -52,9 +52,9 @@ In the next step you can initialise the Nextion and the components you want.
 //Initialise Nextion with the configured UART handle
 NextionInit(&nextion, &huart2);
 
-//Register the component in the library with parameters: Nextion Object, Component Object, Page, ID, Callback Function On Press, Callback Function On Release
-//If you don't want any callback function, pass NULL as the parameter 
-NextionAddComp(&nextion, &button1, 0, 2, buttonCallback, NULL);
+//Register the component in the library with parameters: Nextion Object, Component Object, Object Name, Page, ID, Callback Function On Press, Callback Function On Release
+//If you don't want any callback function, pass NULL as the parameter
+NextionAddComp(&nextion, &button1, "b0", 0, 2, buttonCallback, NULL);
 ```
 The code below shows a complete example if you want a component callback (Only functions needed for this library is included);
 ```
@@ -77,7 +77,7 @@ void buttonCallback()
 int main()
 {
 	NextionInit(&nextion, &huart2);
-	NextionAddComp(&nextion, &button1, 0, 2, buttonCallback, NULL);
+	NextionAddComp(&nextion, &button1, "b0", 0, 2, buttonCallback, NULL);
 	
 	while(1)
 	{
