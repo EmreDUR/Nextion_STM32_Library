@@ -56,8 +56,8 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 #define NEX_RET_INVALID_BAUD                 (0x11)
 #define NEX_RET_INVALID_VARIABLE             (0x1A)
 #define NEX_RET_INVALID_OPERATION            (0x1B)
-#define NEX_EVENT_ON_PRESS		     (0x01)
-#define NEX_EVENT_ON_RELEASE		     (0x00)
+#define NEX_EVENT_ON_PRESS                   (0x01)
+#define NEX_EVENT_ON_RELEASE                 (0x00)
 
 /*
  * NexComp Struct
