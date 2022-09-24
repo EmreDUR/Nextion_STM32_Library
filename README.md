@@ -56,7 +56,7 @@ NextionInit(&nextion, &huart2);
 //If you don't want any callback function, pass NULL as the parameter
 NextionAddComp(&nextion, &button1, "b0", 0, 2, buttonCallback, NULL);
 ```
-The code below shows a complete example if you want a component callback (Only functions needed for this library is included);
+The code below shows a complete example if you want a component callback (Only the functions needed for this library are included);
 ```
 #include "Nextion.h"
 
