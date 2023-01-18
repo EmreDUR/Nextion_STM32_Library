@@ -18,7 +18,7 @@ Before getting started, don't forget to include the library in your project.
 ```
 
 
-First of all, the user should create a Nextion object. Then the multiple objects for the components can be created. 
+First of all, the user should create a Nextion object. Then multiple objects for the components can be created. 
 ```
 //Object for the Nextion display
 Nextion nextion;
