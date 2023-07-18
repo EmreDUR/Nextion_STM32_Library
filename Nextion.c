@@ -53,7 +53,7 @@ uint8_t NextionUpdate(UART_HandleTypeDef *huart, Nextion *nex)
 {
 	if(huart->Instance == (nex->nextionUARTHandle->Instance))
 	{
-		//Add the recieved byte to the array and increment the counter afterwards
+		//Add the received byte to the array and increment the counter afterwards
 		nex->_RxDataArr[nex->_arrCount] = nex->_RxData;
 		nex->_arrCount++;
 
@@ -63,10 +63,11 @@ uint8_t NextionUpdate(UART_HandleTypeDef *huart, Nextion *nex)
 		else
 			nex->_pkgCount = 0;
 
-		//If the data is recieved correctly,
+		//Assume a package is received after three 0xFF commands,
+		//and start processing the data
 		if(nex->_pkgCount == 3)
 		{
-			//Send the data to the sender back:
+			//Determine the length (count) of the data
 			uint8_t count = 0, FFCount = 0;
 			for(uint8_t i = 0; FFCount < 3; i++)
 			{
@@ -74,57 +75,42 @@ uint8_t NextionUpdate(UART_HandleTypeDef *huart, Nextion *nex)
 				if(nex->_RxDataArr[i] == 0xFF) FFCount++;
 			}
 
-			//Create and place the data in a dynamically allocated buffer for easy proccessing,
-			uint8_t *transferBuf = (uint8_t*) malloc(count * sizeof(uint8_t));
-
-			for(uint8_t i = 0; i < count; i++)
-			{
-				transferBuf[i] = nex->_RxDataArr[i];
-			}
-
 			//In case of a touch event call the callback function accordingly,
-			if(transferBuf[0] == NEX_RET_EVENT_TOUCH_HEAD)
+			if(nex->_RxDataArr[0] == NEX_RET_EVENT_TOUCH_HEAD)
 			{
 				//Loop through the component struct array,
 				for(uint8_t i = 0; i < nex->_NexCompCount; i++)
 				{
 					//Detect the affected component by its Page and ID
-					if( (transferBuf[2] == (nex->_NexCompArr[i]->_id)) && (transferBuf[1] == (nex->_NexCompArr[i]->_page)) )
+					if( (nex->_RxDataArr[2] == (nex->_NexCompArr[i]->_id)) && (nex->_RxDataArr[1] == (nex->_NexCompArr[i]->_page)) )
 					{
 						//Call the desired On Press or On Release callback function,
-						if((transferBuf[3] == NEX_EVENT_ON_PRESS) && (nex->_NexCompArr[i]->callbackOnPress != NULL))
+						if((nex->_RxDataArr[3] == NEX_EVENT_ON_PRESS) && (nex->_NexCompArr[i]->callbackOnPress != NULL))
 							nex->_NexCompArr[i]->callbackOnPress();
-						if((transferBuf[3] == NEX_EVENT_ON_RELEASE) && (nex->_NexCompArr[i]->callbackOnRelease != NULL))
+						if((nex->_RxDataArr[3] == NEX_EVENT_ON_RELEASE) && (nex->_NexCompArr[i]->callbackOnRelease != NULL))
 							nex->_NexCompArr[i]->callbackOnRelease();
 					}
 				}
 			}
 
-			//If the recieved package contains string data
-			if(transferBuf[0] == NEX_RET_STRING_HEAD)
+			//If the received package contains string data
+			if(nex->_RxDataArr[0] == NEX_RET_STRING_HEAD)
 			{
 				nex->NextTextLen = 0;
 				for(int i = 0; i < (count - 4); i++)
 				{
-					nex->NexTextBuff[i] = transferBuf[i+1];
+					nex->NexTextBuff[i] = nex->_RxDataArr[i+1];
 					nex->NextTextLen++;
 				}
 			}
 
-			//If the recieved package contains integer data
-			if(transferBuf[0] == NEX_RET_NUMBER_HEAD)
+			//If the received package contains integer data
+			if(nex->_RxDataArr[0] == NEX_RET_NUMBER_HEAD)
 			{
-				nex->NextNumBuff = ((uint32_t)transferBuf[4]<<24)|((uint32_t)transferBuf[3]<<16)|(transferBuf[2]<<8)|(transferBuf[1]);
+				nex->NextNumBuff = ((uint32_t)nex->_RxDataArr[4]<<24)|((uint32_t)nex->_RxDataArr[3]<<16)|(nex->_RxDataArr[2]<<8)|(nex->_RxDataArr[1]);
 			}
 
-			//Send the received command back for debugging purposes,
-			//HAL_UART_Transmit(nex->nextionUARTHandle, transferBuf, count, 50);
-			//HAL_UART_Transmit(nex->nextionUARTHandle, nex->NexTextBuff, nex->NextTextLen, 50);
-
-			//Clear the dynamically allocated buffer after working with it,
-			free(transferBuf);
-
-			//Reset the buffer counters,
+			//Reset the buffer counters
 			nex->_pkgCount = 0;
 			nex->_arrCount = 0;
 		}
